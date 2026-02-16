@@ -1,1 +1,43 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opening Maps...</title>
+  <style>
+    body { font-family: system-ui, sans-serif; text-align: center; padding: 2rem; }
+    a { color: #0066cc; }
+  </style>
+</head>
+<body>
+  <p>Opening directions...</p>
+  <p><a id="fallback" href="#">Click here if not redirected</a></p>
+  <script>
+    (function() {
+      const params = new URLSearchParams(location.search);
+      const lat = params.get('lat');
+      const lng = params.get('lng');
+      const addr = params.get('addr');
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      let url;
+      if (lat && lng) {
+        if (isIOS) {
+          url = 'https://maps.apple.com/?daddr=' + lat + ',' + lng + '&dirflg=d';
+        } else {
+          url = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
+        }
+      } else if (addr) {
+        if (isIOS) {
+          url = 'https://maps.apple.com/?daddr=' + encodeURIComponent(addr) + '&dirflg=d';
+        } else {
+          url = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(addr);
+        }
+      } else {
+        url = 'https://www.google.com/maps';
+      }
+      document.getElementById('fallback').href = url;
+      location.replace(url);
+    })();
+  </script>
+</body>
+</html>
