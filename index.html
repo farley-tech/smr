@@ -20,11 +20,15 @@
       const addr = params.get('addr');
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       let url;
-      if (lat && lng) {
+      const validCoordinate = (value, limit) => value !== null &&
+        /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(value.trim()) &&
+        Number.isFinite(Number(value)) && Math.abs(Number(value)) <= limit;
+      if (validCoordinate(lat, 90) && validCoordinate(lng, 180)) {
+        const destination = encodeURIComponent(Number(lat) + ',' + Number(lng));
         if (isIOS) {
-          url = 'https://maps.apple.com/?daddr=' + lat + ',' + lng + '&dirflg=d';
+          url = 'https://maps.apple.com/?daddr=' + destination + '&dirflg=d';
         } else {
-          url = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
+          url = 'https://www.google.com/maps/dir/?api=1&destination=' + destination;
         }
       } else if (addr) {
         if (isIOS) {
